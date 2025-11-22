@@ -72,4 +72,39 @@ export const generateSEOTags = async (content: string): Promise<{ title: string,
         console.error("SEO Gen Error", error);
         return { title: "", description: "", keywords: [] };
     }
-}
+};
+
+/**
+ * Generates a cover image for the article.
+ */
+export const generateCoverImage = async (prompt: string): Promise<string | null> => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [
+          {
+            text: `Generate a high-quality, professional, abstract corporate finance image representing: "${prompt}". 
+            Style: Minimalist, corporate, blue and gold color palette, high resolution, cinematic lighting. 
+            No text in the image.`,
+          },
+        ],
+      },
+      config: {
+        imageConfig: {
+            aspectRatio: "16:9"
+        }
+      }
+    });
+
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        return `data:image/png;base64,${part.inlineData.data}`;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Image Gen Error", error);
+    return null;
+  }
+};

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, Save, Eye, Wand2 } from 'lucide-react';
+import { ArrowLeft, Sparkles, Save, Eye, Wand2, Image as ImageIcon } from 'lucide-react';
 import { BlogPost, PostStatus, ViewState } from '../types';
-import { generateFinancialDraft, polishContent, generateSEOTags } from '../services/geminiService';
+import { generateFinancialDraft, polishContent, generateSEOTags, generateCoverImage } from '../services/geminiService';
 
 interface ContentEditorProps {
   post?: BlogPost | null;
@@ -14,6 +14,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ post, onSave, onCancel })
   const [content, setContent] = useState(post?.content || '');
   const [category, setCategory] = useState(post?.category || 'Market Insights');
   const [status, setStatus] = useState<PostStatus>(post?.status || PostStatus.DRAFT);
+  const [imageUrl, setImageUrl] = useState(post?.imageUrl || '');
   
   const [aiPrompt, setAiPrompt] = useState('');
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
@@ -29,7 +30,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ post, onSave, onCancel })
       category,
       status,
       date: post?.date || new Date().toISOString().split('T')[0],
-      imageUrl: post?.imageUrl || `https://picsum.photos/800/400?random=${Date.now()}`
+      imageUrl: imageUrl || `https://picsum.photos/800/400?random=${Date.now()}`
     });
   };
 
@@ -58,6 +59,21 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ post, onSave, onCancel })
     alert(`Suggested SEO Title: ${seo.title}\n\nDescription: ${seo.description}`);
     setIsGenerating(false);
   };
+
+  const handleGenerateImage = async () => {
+      if (!title) {
+          alert("Please enter a title first to generate a relevant image.");
+          return;
+      }
+      setIsGenerating(true);
+      const generatedImage = await generateCoverImage(title);
+      if (generatedImage) {
+          setImageUrl(generatedImage);
+      } else {
+          alert("Could not generate image. Please try again.");
+      }
+      setIsGenerating(false);
+  }
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in pb-20">
@@ -149,7 +165,30 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ post, onSave, onCancel })
                   <Eye size={14} /> Check SEO
                 </button>
              </div>
-             {isGenerating && <p className="text-xs text-center mt-3 text-invest-gold animate-pulse">Gemini is thinking...</p>}
+             {isGenerating && <p className="text-xs text-center mt-3 text-invest-gold animate-pulse">Gemini is working...</p>}
+           </div>
+
+           {/* Cover Image */}
+           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h3 className="font-bold text-invest-900 mb-4">Cover Image</h3>
+              <div className="mb-4 rounded-lg overflow-hidden bg-slate-100 aspect-video flex items-center justify-center border border-slate-200 relative group">
+                  {imageUrl ? (
+                      <img src={imageUrl} alt="Cover" className="w-full h-full object-cover" />
+                  ) : (
+                      <div className="text-slate-400 flex flex-col items-center">
+                          <ImageIcon size={24} />
+                          <span className="text-xs mt-2">No image selected</span>
+                      </div>
+                  )}
+              </div>
+              <button 
+                  onClick={handleGenerateImage}
+                  disabled={isGenerating || !title}
+                  className="w-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-invest-900 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                  <Sparkles size={14} className="text-invest-gold" />
+                  Generate with AI
+              </button>
            </div>
 
            {/* Metadata */}

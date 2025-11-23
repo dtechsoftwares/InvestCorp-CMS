@@ -22,17 +22,17 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-invest-900 z-50 flex flex-col items-center justify-center overflow-hidden">
       <div className={`transition-all duration-1000 transform ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <Logo size="xl" showTagline={true} />
+        <Logo size="xl" showTagline={true} variant="light" />
       </div>
       
       {/* Loading Line */}
-      <div className="mt-12 w-48 h-1 bg-slate-100 rounded-full overflow-hidden">
-        <div className={`h-full bg-gradient-to-r from-invest-900 to-blue-500 transition-all duration-[2000ms] ease-out ${animate ? 'w-full' : 'w-0'}`}></div>
+      <div className="mt-12 w-48 h-1 bg-invest-800 rounded-full overflow-hidden">
+        <div className={`h-full bg-gradient-to-r from-invest-gold to-invest-goldlight transition-all duration-[2000ms] ease-out ${animate ? 'w-full' : 'w-0'}`}></div>
       </div>
 
-      <div className={`absolute bottom-10 text-slate-400 text-xs font-medium tracking-widest uppercase transition-opacity duration-1000 delay-500 ${animate ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`absolute bottom-10 text-slate-300 text-xs font-medium tracking-widest uppercase transition-opacity duration-1000 delay-500 ${animate ? 'opacity-100' : 'opacity-0'}`}>
         Secure Banking Systems
       </div>
     </div>

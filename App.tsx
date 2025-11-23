@@ -10,8 +10,16 @@ import ActivityLogs from './components/ActivityLogs';
 import PortfolioList from './components/PortfolioList';
 import ClientList from './components/ClientList';
 import SplashScreen from './components/SplashScreen';
+import Settings from './components/Settings';
+import GhanaCardUpdate from './components/GhanaCardUpdate';
+import KycUpdates from './components/KycUpdates';
+import ProductManagement from './components/ProductManagement';
+import Transactions from './components/Transactions';
+import AgentManagement from './components/AgentManagement';
+import SupportDesk from './components/SupportDesk';
+import Reports from './components/Reports';
 import { ToastContainer } from './components/Toast';
-import { ViewState, BlogPost, PostStatus, User, LogEntry, ToastMessage, Portfolio, Client } from './types';
+import { ViewState, BlogPost, PostStatus, User, LogEntry, ToastMessage, Portfolio, Client, GhanaCardSubmission, AppData, InvestmentProduct, Transaction, Agent, SupportTicket } from './types';
 import { Bell, Search } from 'lucide-react';
 
 // Mock Data
@@ -58,21 +66,117 @@ const initialPortfolios: Portfolio[] = [
 ];
 
 const initialClients: Client[] = [
-    { id: 'c1', name: 'Kwame Mensah', email: 'kwame@example.com', phone: '0201234567', portfolioId: 'p1', onboardingDate: '2023-05-10', status: 'Active', kycStatus: 'Verified' },
-    { id: 'c2', name: 'Ama Osei', email: 'ama@example.com', phone: '0249876543', portfolioId: 'p3', onboardingDate: '2024-01-15', status: 'Active', kycStatus: 'Verified' },
+    { 
+      id: 'c1', 
+      accountNumber: '0041023941',
+      name: 'Kwame Mensah', 
+      clientType: 'Individual',
+      dob: '1985-04-12',
+      email: 'kwame@example.com', 
+      phone: '0201234567', 
+      verificationMethod: 'SMS',
+      portfolioId: 'p1', 
+      onboardingDate: '2023-05-10', 
+      status: 'Active', 
+      kycStatus: 'Verified',
+      termsAccepted: true,
+      walletBalance: 5000.00
+    },
+    { 
+      id: 'c2', 
+      accountNumber: '0041023988',
+      name: 'Ama Osei', 
+      clientType: 'Individual',
+      dob: '1990-11-23',
+      email: 'ama@example.com', 
+      phone: '0249876543', 
+      verificationMethod: 'EMAIL',
+      portfolioId: 'p3', 
+      onboardingDate: '2024-01-15', 
+      status: 'Active', 
+      kycStatus: 'Verified',
+      termsAccepted: true,
+      walletBalance: 12500.50
+    },
+    { 
+      id: 'c3', 
+      accountNumber: '0059923911',
+      name: 'Tech Solutions Ltd', 
+      clientType: 'Corporate',
+      dob: '2010-02-15',
+      email: 'finance@techsolutions.com', 
+      phone: '0302234567', 
+      verificationMethod: 'EMAIL',
+      portfolioId: 'p2', 
+      onboardingDate: '2024-02-20', 
+      status: 'Active', 
+      kycStatus: 'Verified',
+      termsAccepted: true,
+      walletBalance: 150000.00
+    },
 ];
 
+const initialKycSubmissions: GhanaCardSubmission[] = [
+    {
+        id: 'k1',
+        accountNumber: '0041023941',
+        ghanaCardNumber: 'GHA-123456789-0',
+        firstName: 'Kwame',
+        lastName: 'Mensah',
+        frontImageName: 'gh_card_front.jpg',
+        backImageName: 'gh_card_back.jpg',
+        submittedAt: '2024-10-21 09:30',
+        status: 'Pending'
+    }
+];
+
+const initialProducts: InvestmentProduct[] = [
+    { id: 'prod1', name: '91-Day Treasury Bill', category: 'T-Bill', interestRate: 28.5, duration: '91 Days', minAmount: 100, status: 'Active' },
+    { id: 'prod2', name: 'InvestCorp Balanced Fund', category: 'Mutual Fund', interestRate: 22.4, duration: 'Open', minAmount: 50, status: 'Active' },
+    { id: 'prod3', name: '1-Year Fixed Note', category: 'Fixed Deposit', interestRate: 19.0, duration: '365 Days', minAmount: 5000, status: 'Active' },
+];
+
+const initialTransactions: Transaction[] = [
+    { id: 'tx1', clientId: 'c1', type: 'Deposit', amount: 2000, date: '2024-10-22 10:30', status: 'Completed', reference: 'MOMO-12345' },
+    { id: 'tx2', clientId: 'c2', type: 'Withdrawal', amount: 500, date: '2024-10-21 14:15', status: 'Completed', reference: 'BANK-98765' },
+];
+
+const initialAgents: Agent[] = [
+    { id: 'a1', name: 'Kofi Boateng', code: 'AGT-101', region: 'Greater Accra', phone: '0241112222', email: 'kofi@agency.com', totalSales: 45000, commissionRate: 2.5, status: 'Active' },
+    { id: 'a2', name: 'Esi Mansa', code: 'AGT-102', region: 'Ashanti', phone: '0203334444', email: 'esi@agency.com', totalSales: 28000, commissionRate: 2.5, status: 'Active' },
+];
+
+const initialTickets: SupportTicket[] = [
+    { id: 't1', clientId: 'c1', subject: 'Unable to reset password', category: 'Technical', priority: 'High', status: 'Open', dateCreated: '2024-10-22 09:00' },
+    { id: 't2', clientId: 'c3', subject: 'Inquiry about Corporate Bond rates', category: 'Investment', priority: 'Medium', status: 'In Progress', dateCreated: '2024-10-21 16:30' },
+];
+
+
+const DEFAULT_BG = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isGhanaCardView, setIsGhanaCardView] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.DASHBOARD);
+  
+  // State Modules
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [logs, setLogs] = useState<LogEntry[]>(initialLogs);
   const [portfolios, setPortfolios] = useState<Portfolio[]>(initialPortfolios);
   const [clients, setClients] = useState<Client[]>(initialClients);
+  const [kycUpdates, setKycUpdates] = useState<GhanaCardSubmission[]>(initialKycSubmissions);
+  const [products, setProducts] = useState<InvestmentProduct[]>(initialProducts);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [agents, setAgents] = useState<Agent[]>(initialAgents);
+  const [tickets, setTickets] = useState<SupportTicket[]>(initialTickets);
   
+  // Load background settings from LocalStorage
+  const [loginBg, setLoginBg] = useState(localStorage.getItem('investcorp_login_bg') || DEFAULT_BG);
+  const [loginOpacity, setLoginOpacity] = useState(parseFloat(localStorage.getItem('investcorp_login_opacity') || '0.8'));
+  const [loginBlur, setLoginBlur] = useState(parseFloat(localStorage.getItem('investcorp_login_blur') || '4'));
+
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -94,6 +198,16 @@ const App: React.FC = () => {
     setIsAuthenticated(false);
     setCurrentView(ViewState.DASHBOARD);
     addToast('Logged Out', 'See you next time.', 'info');
+  };
+
+  const handleSaveSettings = (url: string, opacity: number, blur: number) => {
+      setLoginBg(url);
+      setLoginOpacity(opacity);
+      setLoginBlur(blur);
+      localStorage.setItem('investcorp_login_bg', url);
+      localStorage.setItem('investcorp_login_opacity', opacity.toString());
+      localStorage.setItem('investcorp_login_blur', blur.toString());
+      addToast('Settings Saved', 'Login appearance updated successfully.', 'success');
   };
 
   const handleAddUser = (newUser: Partial<User>) => {
@@ -128,7 +242,97 @@ const App: React.FC = () => {
           status: 'Active'
       };
       setClients([client, ...clients]);
-      addToast('Client Onboarded', `${client.name} has been successfully added.`, 'success');
+      addToast('Client Account Created', `Account ${client.accountNumber} for ${client.name} is ready.`, 'success');
+  };
+
+  const handleKycSubmission = (submission: GhanaCardSubmission) => {
+      setKycUpdates([submission, ...kycUpdates]);
+      setLogs([{ id: Date.now().toString(), user: 'Public Portal', action: 'KYC Submission', target: submission.accountNumber, timestamp: new Date().toLocaleString(), type: 'info' }, ...logs]);
+  };
+  
+  // Handlers for New Modules
+  const handleAddProduct = (product: InvestmentProduct) => {
+      setProducts([product, ...products]);
+      addToast('Product Added', `${product.name} is now available.`, 'success');
+  };
+
+  const handleAddTransaction = (tx: Partial<Transaction>) => {
+      const newTx: Transaction = {
+          ...tx as Transaction,
+          id: Date.now().toString(),
+      };
+      setTransactions([newTx, ...transactions]);
+      addToast('Transaction Processed', `${newTx.type} of GHS ${newTx.amount} completed.`, 'success');
+  };
+
+  const handleAddAgent = (agent: Agent) => {
+      setAgents([agent, ...agents]);
+      addToast('Agent Registered', `${agent.name} added to sales force.`, 'success');
+  };
+
+  const handleUpdateTicket = (id: string, status: 'Resolved') => {
+      setTickets(tickets.map(t => t.id === id ? { ...t, status } : t));
+      addToast('Ticket Updated', 'Support ticket marked as resolved.', 'success');
+  };
+
+  // Intelligent Import/Export Logic
+  const handleExportData = (selectedSections: string[]) => {
+    const exportData: AppData = {};
+    
+    if (selectedSections.includes('posts')) exportData.posts = posts;
+    if (selectedSections.includes('users')) exportData.users = users;
+    if (selectedSections.includes('logs')) exportData.logs = logs;
+    if (selectedSections.includes('portfolios')) exportData.portfolios = portfolios;
+    if (selectedSections.includes('clients')) exportData.clients = clients;
+    if (selectedSections.includes('kycUpdates')) exportData.kycUpdates = kycUpdates;
+    // New Modules
+    if (selectedSections.includes('products')) exportData.products = products;
+    if (selectedSections.includes('transactions')) exportData.transactions = transactions;
+    if (selectedSections.includes('agents')) exportData.agents = agents;
+    if (selectedSections.includes('tickets')) exportData.tickets = tickets;
+
+    if (selectedSections.includes('settings')) {
+        exportData.settings = { bg: loginBg, opacity: loginOpacity, blur: loginBlur };
+    }
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `investcorp_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    addToast('Export Successful', 'Your backup file has been downloaded.', 'success');
+  };
+
+  const handleImportData = (data: AppData, selectedSections: string[]) => {
+     let count = 0;
+     if (selectedSections.includes('posts') && data.posts) { setPosts(data.posts); count++; }
+     if (selectedSections.includes('users') && data.users) { setUsers(data.users); count++; }
+     if (selectedSections.includes('logs') && data.logs) { setLogs(data.logs); count++; }
+     if (selectedSections.includes('portfolios') && data.portfolios) { setPortfolios(data.portfolios); count++; }
+     if (selectedSections.includes('clients') && data.clients) { setClients(data.clients); count++; }
+     if (selectedSections.includes('kycUpdates') && data.kycUpdates) { setKycUpdates(data.kycUpdates); count++; }
+     // New Modules Import
+     if (selectedSections.includes('products') && data.products) { setProducts(data.products); count++; }
+     if (selectedSections.includes('transactions') && data.transactions) { setTransactions(data.transactions); count++; }
+     if (selectedSections.includes('agents') && data.agents) { setAgents(data.agents); count++; }
+     if (selectedSections.includes('tickets') && data.tickets) { setTickets(data.tickets); count++; }
+
+     if (selectedSections.includes('settings') && data.settings) {
+         handleSaveSettings(data.settings.bg, data.settings.opacity, data.settings.blur);
+         count++;
+     }
+
+     if (count > 0) {
+         addToast('Import Successful', `Successfully restored ${count} data modules.`, 'success');
+         setLogs([{ id: Date.now().toString(), user: 'Current User', action: 'Data Import', target: 'System', timestamp: new Date().toLocaleString(), type: 'warning' }, ...logs]);
+     } else {
+         addToast('Import Cancelled', 'No data modules were selected for import.', 'info');
+     }
   };
 
 
@@ -137,10 +341,27 @@ const App: React.FC = () => {
   }
 
   if (!isAuthenticated) {
+    if (isGhanaCardView) {
+      return (
+        <GhanaCardUpdate 
+          onBack={() => setIsGhanaCardView(false)}
+          onSubmit={handleKycSubmission}
+          backgroundImage={loginBg}
+          overlayOpacity={loginOpacity}
+          blurLevel={loginBlur}
+        />
+      );
+    }
     return (
       <>
         <ToastContainer toasts={toasts} removeToast={removeToast} />
-        <Login onLogin={handleLogin} />
+        <Login 
+          onLogin={handleLogin} 
+          onUpdateGhanaCard={() => setIsGhanaCardView(true)}
+          backgroundImage={loginBg} 
+          overlayOpacity={loginOpacity} 
+          blurLevel={loginBlur}
+        />
       </>
     );
   }
@@ -194,21 +415,32 @@ const App: React.FC = () => {
           return <PortfolioList portfolios={portfolios} onAdd={handleAddPortfolio} />;
       case ViewState.CLIENTS:
           return <ClientList clients={clients} portfolios={portfolios} onAdd={handleAddClient} />;
+      case ViewState.KYC_UPDATES:
+          return <KycUpdates submissions={kycUpdates} />;
+      case ViewState.PRODUCTS:
+          return <ProductManagement products={products} onAdd={handleAddProduct} />;
+      case ViewState.TRANSACTIONS:
+          return <Transactions transactions={transactions} clients={clients} onAddTransaction={handleAddTransaction} />;
+      case ViewState.AGENTS:
+          return <AgentManagement agents={agents} onAdd={handleAddAgent} />;
+      case ViewState.SUPPORT:
+          return <SupportDesk tickets={tickets} clients={clients} onUpdateStatus={handleUpdateTicket} />;
+      case ViewState.REPORTS:
+          return <Reports />;
       case ViewState.USERS:
         return <Users users={users} onAddUser={handleAddUser} />;
       case ViewState.ACTIVITY_LOGS:
         return <ActivityLogs logs={logs} />;
       case ViewState.SETTINGS:
         return (
-            <div className="flex items-center justify-center h-96 text-slate-400 bg-white rounded-xl border border-slate-200 shadow-sm animate-fade-in">
-                <div className="text-center">
-                    <div className="bg-slate-100 p-4 rounded-full inline-block mb-4">
-                      <Search size={32} className="text-slate-400" />
-                    </div>
-                    <h2 className="text-xl font-bold text-invest-900 mb-2">Settings Unavailable</h2>
-                    <p className="max-w-md mx-auto">System configuration is restricted to super administrators. Contact IT support for assistance.</p>
-                </div>
-            </div>
+          <Settings 
+            currentBg={loginBg} 
+            currentOpacity={loginOpacity} 
+            currentBlur={loginBlur}
+            onSave={handleSaveSettings} 
+            onExportData={handleExportData}
+            onImportData={handleImportData}
+          />
         );
       default:
         return <Dashboard />;

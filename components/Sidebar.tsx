@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LayoutDashboard, FileText, Users, Settings, PieChart, LogOut, ShieldCheck, Briefcase } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Settings, PieChart, LogOut, ShieldCheck, Briefcase, CreditCard, ShoppingBag, ArrowLeftRight, BadgeDollarSign, Headphones, BarChart3 } from 'lucide-react';
 import { ViewState } from '../types';
 import Logo from './Logo';
 
@@ -13,9 +13,15 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, onLogout }) => {
   const navItems = [
     { id: ViewState.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
-    { id: ViewState.POSTS_LIST, label: 'Market Insights', icon: FileText },
+    { id: ViewState.PRODUCTS, label: 'Products', icon: ShoppingBag },
     { id: ViewState.PORTFOLIOS, label: 'Portfolios', icon: PieChart },
+    { id: ViewState.TRANSACTIONS, label: 'Transactions', icon: ArrowLeftRight },
     { id: ViewState.CLIENTS, label: 'Clients', icon: Briefcase },
+    { id: ViewState.AGENTS, label: 'Agents', icon: BadgeDollarSign },
+    { id: ViewState.KYC_UPDATES, label: 'KYC Updates', icon: CreditCard },
+    { id: ViewState.POSTS_LIST, label: 'Insights', icon: FileText },
+    { id: ViewState.SUPPORT, label: 'Support Desk', icon: Headphones },
+    { id: ViewState.REPORTS, label: 'Reports', icon: BarChart3 },
     { id: ViewState.USERS, label: 'Team', icon: Users },
     { id: ViewState.ACTIVITY_LOGS, label: 'Activity Logs', icon: ShieldCheck },
     { id: ViewState.SETTINGS, label: 'Settings', icon: Settings },
@@ -29,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, onLogout }
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1 custom-scrollbar">
         <div className="px-4 mb-2 text-xs font-bold text-invest-700 uppercase tracking-wider">Main Menu</div>
         {navItems.map((item) => {
           const isActive = currentView === item.id;

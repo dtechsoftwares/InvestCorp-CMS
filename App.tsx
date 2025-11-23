@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -22,11 +21,11 @@ import Reports from './components/Reports';
 import InterestEngine from './components/InterestEngine';
 import ClientPortal from './components/ClientPortal';
 import BranchManagement from './components/BranchManagement';
-import MarketingCRM from './components/MarketingCRM'; // New Import
-import DocumentsManager from './components/DocumentsManager'; // New Import
+import MarketingCRM from './components/MarketingCRM';
+import DocumentsManager from './components/DocumentsManager';
 import { ToastContainer } from './components/Toast';
 import { ViewState, BlogPost, PostStatus, User, LogEntry, ToastMessage, Portfolio, Client, GhanaCardSubmission, AppData, InvestmentProduct, Transaction, Agent, SupportTicket, InterestRun, CommissionPayout, ClientDocument, Branch, NotificationConfig, MarketingCampaign, Lead, SystemDocument } from './types';
-import { Bell, Search, Moon, Sun, Eye, EyeOff, ShieldAlert } from 'lucide-react';
+import { Bell, Search, Moon, Sun, Eye, EyeOff, ShieldAlert, Menu, Home, Briefcase, ArrowLeftRight, Grid } from 'lucide-react';
 
 // Mock Data
 const initialPosts: BlogPost[] = [
@@ -239,6 +238,9 @@ const App: React.FC = () => {
   const [isGhanaCardView, setIsGhanaCardView] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.DASHBOARD);
   
+  // Mobile Sidebar State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   // State Modules
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -315,6 +317,7 @@ const App: React.FC = () => {
       addToast('Settings Saved', 'Login appearance updated successfully.', 'success');
   };
 
+  // ... (Keep all other handler functions from original App.tsx) ...
   const handleAddUser = (newUser: Partial<User>) => {
     const user: User = {
       id: Date.now().toString(),
@@ -705,18 +708,78 @@ const App: React.FC = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex font-sans text-slate-800 transition-colors duration-300">
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-      <Sidebar currentView={currentView} onChangeView={setCurrentView} onLogout={handleLogout} />
+  // Bottom Navigation Component
+  const BottomNav = () => (
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 px-6 py-3 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <button 
+        onClick={() => { setCurrentView(ViewState.DASHBOARD); setIsSidebarOpen(false); }}
+        className={`flex flex-col items-center gap-1 ${currentView === ViewState.DASHBOARD ? 'text-invest-900 dark:text-invest-gold' : 'text-slate-400'}`}
+      >
+        <Home size={20} />
+        <span className="text-[10px] font-medium">Home</span>
+      </button>
+      <button 
+        onClick={() => { setCurrentView(ViewState.CLIENTS); setIsSidebarOpen(false); }}
+        className={`flex flex-col items-center gap-1 ${currentView === ViewState.CLIENTS ? 'text-invest-900 dark:text-invest-gold' : 'text-slate-400'}`}
+      >
+        <Briefcase size={20} />
+        <span className="text-[10px] font-medium">Clients</span>
+      </button>
       
-      <main className="flex-1 ml-64 p-8 relative">
+      {/* Floating Action Button for Transactions */}
+      <div className="relative -top-6">
+        <button 
+            onClick={() => { setCurrentView(ViewState.TRANSACTIONS); setIsSidebarOpen(false); }}
+            className="w-14 h-14 bg-invest-gold rounded-full flex items-center justify-center text-white shadow-lg shadow-amber-500/40 transform hover:scale-105 transition-all"
+        >
+            <ArrowLeftRight size={24} />
+        </button>
+      </div>
+
+      <button 
+        onClick={() => { setCurrentView(ViewState.PORTFOLIOS); setIsSidebarOpen(false); }}
+        className={`flex flex-col items-center gap-1 ${currentView === ViewState.PORTFOLIOS ? 'text-invest-900 dark:text-invest-gold' : 'text-slate-400'}`}
+      >
+        <Grid size={20} />
+        <span className="text-[10px] font-medium">Funds</span>
+      </button>
+      <button 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className={`flex flex-col items-center gap-1 ${isSidebarOpen ? 'text-invest-900 dark:text-invest-gold' : 'text-slate-400'}`}
+      >
+        <Menu size={20} />
+        <span className="text-[10px] font-medium">Menu</span>
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex font-sans text-slate-800 transition-colors duration-300 overflow-hidden">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
+      {/* Sidebar - Responsive Drawer */}
+      <Sidebar 
+        currentView={currentView} 
+        onChangeView={(view) => {
+            setCurrentView(view);
+            setIsSidebarOpen(false);
+        }} 
+        onLogout={handleLogout} 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+      
+      <main className="flex-1 lg:ml-64 flex flex-col h-screen relative">
         {/* Top Bar */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="px-4 py-4 lg:px-8 lg:py-6 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-30 flex justify-between items-center">
            <div className="flex items-center gap-4">
-             {/* Breadcrumb or Title */}
+             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-slate-500">
+                 <Menu size={24} />
+             </button>
+             <div className="lg:hidden font-bold text-invest-900 dark:text-white text-lg">InvestCorp</div>
            </div>
-           <div className="flex items-center gap-6">
+           
+           <div className="flex items-center gap-3 lg:gap-6">
               <div className="relative hidden md:block">
                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                  <input 
@@ -726,15 +789,13 @@ const App: React.FC = () => {
                  />
               </div>
               
-              <div className="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+              <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden md:block"></div>
               
               <button 
                 onClick={() => setIsPrivacyMode(!isPrivacyMode)} 
                 className={`text-slate-500 hover:text-invest-900 dark:text-slate-400 dark:hover:text-white transition-colors flex items-center gap-2 ${isPrivacyMode ? 'text-invest-gold dark:text-invest-gold' : ''}`}
-                title="Toggle Data Privacy Mode (Mask Sensitive Data)"
               >
                   {isPrivacyMode ? <EyeOff size={20} /> : <Eye size={20} />}
-                  {isPrivacyMode && <span className="text-xs font-bold text-invest-gold">HIDDEN</span>}
               </button>
 
               <button onClick={() => setIsDarkMode(!isDarkMode)} className="text-slate-500 hover:text-invest-900 dark:text-slate-400 dark:hover:text-white">
@@ -746,28 +807,26 @@ const App: React.FC = () => {
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
               </button>
               
-              <div className="flex items-center gap-3 pl-2">
-                <div className="text-right hidden sm:block">
-                  <div className="text-sm font-bold text-invest-900 dark:text-white">Admin User</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">Super Admin</div>
-                </div>
-                <div className="h-10 w-10 rounded-full bg-invest-gold flex items-center justify-center text-white font-bold text-sm ring-4 ring-white dark:ring-slate-800 shadow-sm cursor-pointer hover:bg-amber-600 transition-colors">
+              <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-invest-gold flex items-center justify-center text-white font-bold text-sm ring-2 lg:ring-4 ring-white dark:ring-slate-800 shadow-sm cursor-pointer hover:bg-amber-600 transition-colors">
                   JD
-                </div>
               </div>
            </div>
         </div>
 
-        <div className="max-w-7xl mx-auto">
-          {isPrivacyMode && (
-              <div className="bg-invest-900/5 border border-invest-900/10 rounded-lg p-3 mb-6 flex items-center gap-3 text-sm text-invest-900">
-                  <ShieldAlert size={18} />
-                  <span className="font-bold">Privacy Mode Enabled:</span>
-                  <span>Sensitive client PII and financial balances are currently masked for security compliance.</span>
-              </div>
-          )}
-          {renderContent()}
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-8">
+            <div className="max-w-7xl mx-auto">
+            {isPrivacyMode && (
+                <div className="bg-invest-900/5 border border-invest-900/10 rounded-lg p-3 mb-6 flex items-center gap-3 text-sm text-invest-900">
+                    <ShieldAlert size={18} />
+                    <span className="font-bold hidden sm:inline">Privacy Mode Enabled:</span>
+                    <span>Sensitive data is masked.</span>
+                </div>
+            )}
+            {renderContent()}
+            </div>
         </div>
+
+        <BottomNav />
       </main>
     </div>
   );

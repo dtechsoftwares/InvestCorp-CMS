@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Client, Portfolio, Asset, Transaction, ClientDocument, TicketMessage } from '../types';
-import { LayoutDashboard, FileText, PieChart, MessageSquare, Download, Calendar, TrendingUp, DollarSign, Clock, Shield, Search, ArrowRight, User, Sparkles, Bot } from 'lucide-react';
+import { LayoutDashboard, FileText, PieChart, MessageSquare, Download, Calendar, TrendingUp, DollarSign, Clock, Shield, Search, ArrowRight, User, Sparkles, Bot, ChevronDown } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ClientPortalProps {
@@ -103,26 +104,29 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
         <div className="bg-slate-50 min-h-screen pb-20 font-sans">
             {/* Simulation Header */}
             <div className="bg-invest-900 text-white p-4 sticky top-0 z-30 shadow-md">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                         <div className="p-2 bg-white/10 rounded-lg"><User size={20} /></div>
-                         <div>
-                             <div className="text-xs opacity-60 uppercase tracking-wider">Viewing as Client</div>
-                             <select 
-                                value={selectedClientId} 
-                                onChange={(e) => setSelectedClientId(e.target.value)}
-                                className="bg-transparent font-bold border-none outline-none cursor-pointer text-invest-gold"
-                             >
-                                 {clients.map(c => <option key={c.id} value={c.id} className="text-invest-900">{c.name}</option>)}
-                             </select>
-                         </div>
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center justify-between w-full md:w-auto">
+                        <div className="flex items-center gap-3">
+                             <div className="p-2 bg-white/10 rounded-lg"><User size={20} /></div>
+                             <div>
+                                 <div className="text-xs opacity-60 uppercase tracking-wider">Client Portal</div>
+                                 <select 
+                                    value={selectedClientId} 
+                                    onChange={(e) => setSelectedClientId(e.target.value)}
+                                    className="bg-transparent font-bold border-none outline-none cursor-pointer text-invest-gold appearance-none pr-2"
+                                 >
+                                     {clients.map(c => <option key={c.id} value={c.id} className="text-invest-900">{c.name}</option>)}
+                                 </select>
+                             </div>
+                        </div>
                     </div>
-                    <div className="flex gap-4 text-sm">
+                    
+                    <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-1 text-sm scrollbar-hide">
                         {['Dashboard', 'Investments', 'History', 'Documents', 'Support'].map(tab => (
                             <button 
                                 key={tab}
                                 onClick={() => setActiveTab(tab as any)}
-                                className={`px-3 py-1 rounded transition-colors ${activeTab === tab ? 'bg-invest-gold text-invest-900 font-bold' : 'hover:bg-white/10 opacity-80'}`}
+                                className={`px-3 py-1 rounded transition-colors whitespace-nowrap ${activeTab === tab ? 'bg-invest-gold text-invest-900 font-bold' : 'hover:bg-white/10 opacity-80'}`}
                             >
                                 {tab}
                             </button>
@@ -131,17 +135,17 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto p-6 animate-fade-in">
+            <div className="max-w-7xl mx-auto p-4 md:p-6 animate-fade-in">
                 
                 {/* Dashboard View */}
                 {activeTab === 'Dashboard' && (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                             {/* Main Balance Card */}
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-invest-gold/10 rounded-full -mr-10 -mt-10"></div>
                                 <h3 className="text-slate-500 font-medium text-sm mb-2">Total Portfolio Value</h3>
-                                <div className="text-4xl font-bold text-invest-900 mb-2">
+                                <div className="text-3xl md:text-4xl font-bold text-invest-900 mb-2">
                                     {new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(totalValue)}
                                 </div>
                                 <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
@@ -151,7 +155,7 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
 
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
                                 <h3 className="text-slate-500 font-medium text-sm mb-2">Total Interest Earned</h3>
-                                <div className="text-3xl font-bold text-invest-gold mb-2">
+                                <div className="text-2xl md:text-3xl font-bold text-invest-gold mb-2">
                                     {new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(totalInterest)}
                                 </div>
                                 <div className="text-slate-400 text-xs">Accrued across all assets</div>
@@ -159,7 +163,7 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
 
                             <div className="bg-invest-900 rounded-2xl p-6 shadow-sm border border-slate-100 text-white">
                                 <h3 className="opacity-80 font-medium text-sm mb-2">Active Investments</h3>
-                                <div className="text-3xl font-bold mb-2">{clientAssets.length}</div>
+                                <div className="text-2xl md:text-3xl font-bold mb-2">{clientAssets.length}</div>
                                 <div className="text-xs opacity-60">Next maturity: {clientAssets[0]?.maturityDate || 'N/A'}</div>
                             </div>
                         </div>
@@ -167,7 +171,7 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                              <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
                                  <h3 className="font-bold text-invest-900 mb-6">Portfolio Growth</h3>
-                                 <div className="h-64">
+                                 <div className="h-56 md:h-64">
                                      <ResponsiveContainer width="100%" height="100%">
                                         <AreaChart data={performanceData}>
                                             <defs>
@@ -207,40 +211,68 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
 
                 {/* Investments List */}
                 {activeTab === 'Investments' && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div className="p-6 border-b border-slate-100">
-                            <h3 className="font-bold text-invest-900">Your Active Holdings</h3>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-slate-500">
-                                    <tr>
-                                        <th className="px-6 py-4">Product</th>
-                                        <th className="px-6 py-4">Start Date</th>
-                                        <th className="px-6 py-4">Maturity</th>
-                                        <th className="px-6 py-4 text-right">Invested</th>
-                                        <th className="px-6 py-4 text-right">Current Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {clientAssets.map(asset => (
-                                        <tr key={asset.id} className="hover:bg-slate-50">
-                                            <td className="px-6 py-4">
-                                                <div className="font-bold text-invest-900">{asset.productName}</div>
-                                                <div className="text-xs text-slate-500">{asset.type} • {asset.rate}% Rate</div>
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-600">{asset.startDate}</td>
-                                            <td className="px-6 py-4 text-slate-600">
-                                                {asset.maturityDate ? (
-                                                    <span className="flex items-center gap-1"><Clock size={12}/> {asset.maturityDate}</span>
-                                                ) : 'Open-Ended'}
-                                            </td>
-                                            <td className="px-6 py-4 text-right font-medium">₵{asset.investedAmount.toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-right font-bold text-invest-gold">₵{asset.currentValue.toLocaleString()}</td>
+                    <div className="space-y-4">
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hidden md:block">
+                            <div className="p-6 border-b border-slate-100">
+                                <h3 className="font-bold text-invest-900">Your Active Holdings</h3>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-slate-50 text-slate-500">
+                                        <tr>
+                                            <th className="px-6 py-4">Product</th>
+                                            <th className="px-6 py-4">Start Date</th>
+                                            <th className="px-6 py-4">Maturity</th>
+                                            <th className="px-6 py-4 text-right">Invested</th>
+                                            <th className="px-6 py-4 text-right">Current Value</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {clientAssets.map(asset => (
+                                            <tr key={asset.id} className="hover:bg-slate-50">
+                                                <td className="px-6 py-4">
+                                                    <div className="font-bold text-invest-900">{asset.productName}</div>
+                                                    <div className="text-xs text-slate-500">{asset.type} • {asset.rate}% Rate</div>
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-600">{asset.startDate}</td>
+                                                <td className="px-6 py-4 text-slate-600">
+                                                    {asset.maturityDate ? (
+                                                        <span className="flex items-center gap-1"><Clock size={12}/> {asset.maturityDate}</span>
+                                                    ) : 'Open-Ended'}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-medium">₵{asset.investedAmount.toLocaleString()}</td>
+                                                <td className="px-6 py-4 text-right font-bold text-invest-gold">₵{asset.currentValue.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        {/* Mobile Card View for Investments */}
+                        <div className="md:hidden space-y-4">
+                            {clientAssets.map(asset => (
+                                <div key={asset.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h4 className="font-bold text-invest-900">{asset.productName}</h4>
+                                        <span className="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded-full">{asset.type}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div className="text-xs text-slate-500">Rate: {asset.rate}%</div>
+                                        <div className="text-xs text-slate-500">{asset.maturityDate ? `Matures: ${asset.maturityDate}` : 'Open Ended'}</div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-50">
+                                        <div>
+                                            <div className="text-[10px] text-slate-400 uppercase">Invested</div>
+                                            <div className="font-medium text-slate-700">₵{asset.investedAmount.toLocaleString()}</div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-[10px] text-slate-400 uppercase">Value</div>
+                                            <div className="font-bold text-invest-gold">₵{asset.currentValue.toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -268,7 +300,7 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
                 
                 {/* AI Concierge Support Chat */}
                 {activeTab === 'Support' && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 h-[600px] flex flex-col relative overflow-hidden">
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 h-[500px] md:h-[600px] flex flex-col relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-invest-gold/5 rounded-full -mr-20 -mt-20"></div>
                         <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl z-10">
                             <div className="flex items-center gap-2">
@@ -279,10 +311,10 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-1 p-6 overflow-y-auto space-y-4 z-10">
+                        <div className="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 z-10">
                             {chatMessages.map((msg, idx) => (
                                 <div key={idx} className={`flex ${msg.sender === 'Client' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm ${
+                                    <div className={`max-w-[85%] p-3 md:p-4 rounded-2xl shadow-sm text-sm ${
                                         msg.sender === 'Client' 
                                         ? 'bg-invest-900 text-white rounded-br-none' 
                                         : 'bg-white border border-slate-100 rounded-bl-none'
@@ -310,7 +342,7 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
                                 type="text" 
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
-                                placeholder="Ask about your balance, withdrawals, or rates..." 
+                                placeholder="Type a message..." 
                                 className="flex-1 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-invest-gold" 
                             />
                             <button type="submit" className="bg-invest-gold text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors shadow-lg shadow-amber-500/20">
@@ -322,35 +354,55 @@ const ClientPortal: React.FC<ClientPortalProps> = ({ clients, portfolios, transa
 
                 {/* History View */}
                 {activeTab === 'History' && (
-                     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-slate-500">
-                                    <tr>
-                                        <th className="px-6 py-4">Date</th>
-                                        <th className="px-6 py-4">Transaction Ref</th>
-                                        <th className="px-6 py-4">Type</th>
-                                        <th className="px-6 py-4 text-right">Amount</th>
-                                        <th className="px-6 py-4">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {clientTransactions.map(t => (
-                                        <tr key={t.id} className="hover:bg-slate-50">
-                                            <td className="px-6 py-4 text-slate-600">{t.date.split(',')[0]}</td>
-                                            <td className="px-6 py-4 font-mono text-xs">{t.reference}</td>
-                                            <td className="px-6 py-4">{t.type}</td>
-                                            <td className={`px-6 py-4 text-right font-medium ${t.type === 'Withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
-                                                {t.type === 'Withdrawal' ? '-' : '+'}₵{t.amount.toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="px-2 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">{t.status}</span>
-                                            </td>
+                     <div className="space-y-4">
+                         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hidden md:block">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-slate-50 text-slate-500">
+                                        <tr>
+                                            <th className="px-6 py-4">Date</th>
+                                            <th className="px-6 py-4">Transaction Ref</th>
+                                            <th className="px-6 py-4">Type</th>
+                                            <th className="px-6 py-4 text-right">Amount</th>
+                                            <th className="px-6 py-4">Status</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {clientTransactions.map(t => (
+                                            <tr key={t.id} className="hover:bg-slate-50">
+                                                <td className="px-6 py-4 text-slate-600">{t.date.split(',')[0]}</td>
+                                                <td className="px-6 py-4 font-mono text-xs">{t.reference}</td>
+                                                <td className="px-6 py-4">{t.type}</td>
+                                                <td className={`px-6 py-4 text-right font-medium ${t.type === 'Withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
+                                                    {t.type === 'Withdrawal' ? '-' : '+'}₵{t.amount.toLocaleString()}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="px-2 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">{t.status}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                         </div>
+
+                         {/* Mobile History List */}
+                         <div className="md:hidden space-y-3">
+                             {clientTransactions.map(t => (
+                                 <div key={t.id} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex justify-between items-center">
+                                     <div>
+                                         <div className="text-sm font-bold text-invest-900">{t.type}</div>
+                                         <div className="text-xs text-slate-500">{t.date.split(',')[0]} • {t.reference}</div>
+                                     </div>
+                                     <div className="text-right">
+                                         <div className={`font-bold ${t.type === 'Withdrawal' ? 'text-red-600' : 'text-green-600'}`}>
+                                             {t.type === 'Withdrawal' ? '-' : '+'}₵{t.amount.toLocaleString()}
+                                         </div>
+                                         <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">{t.status}</span>
+                                     </div>
+                                 </div>
+                             ))}
+                         </div>
                      </div>
                 )}
 

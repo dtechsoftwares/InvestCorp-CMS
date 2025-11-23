@@ -1,8 +1,7 @@
 
-
 import React, { useState } from 'react';
 import { Transaction, Client, PaymentChannel, InvestmentProduct } from '../types';
-import { ArrowUpRight, ArrowDownLeft, RefreshCw, Search, Filter, PlusCircle, MinusCircle, Smartphone, CreditCard, Building, BookOpen, CheckCircle, RotateCcw, AlertTriangle, FileSpreadsheet, Upload, ArrowRightLeft, Clock, Eye, EyeOff, ShieldAlert, Flag } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, RefreshCw, Search, Filter, PlusCircle, MinusCircle, Smartphone, CreditCard, Building, BookOpen, CheckCircle, RotateCcw, AlertTriangle, FileSpreadsheet, Upload, ArrowRightLeft, Clock, Eye, EyeOff, ShieldAlert, Flag, ChevronDown } from 'lucide-react';
 
 interface TransactionsProps {
   transactions: Transaction[];
@@ -168,42 +167,42 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
     <div className="animate-fade-in space-y-6">
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-invest-900">Payment Engine & Wallet</h2>
+          <h2 className="text-2xl font-bold text-invest-900 dark:text-white">Payment Engine & Wallet</h2>
           <p className="text-slate-500 text-sm mt-1">Manage fund transfers, ledger postings, and channel settlements.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 w-full sm:w-auto">
             <button 
                 onClick={() => { setTxType('Transfer'); setShowModal(true); }}
-                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 flex items-center gap-2 shadow-sm"
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 shadow-sm whitespace-nowrap"
             >
-                <ArrowRightLeft size={18} /> Transfer Funds
+                <ArrowRightLeft size={18} /> Transfer
             </button>
             <button 
                 onClick={() => { setTxType('Withdrawal'); setShowModal(true); }}
-                className="px-4 py-2 bg-white border border-red-200 text-red-700 rounded-lg text-sm font-medium hover:bg-red-50 flex items-center gap-2 shadow-sm"
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-red-200 text-red-700 rounded-lg text-sm font-medium hover:bg-red-50 flex items-center gap-2 shadow-sm whitespace-nowrap"
             >
-                <MinusCircle size={18} /> Process Withdrawal
+                <MinusCircle size={18} /> Withdraw
             </button>
             <button 
                 onClick={() => { setTxType('Deposit'); setShowModal(true); }}
-                className="px-4 py-2 bg-invest-900 text-white rounded-lg text-sm font-medium hover:bg-invest-800 flex items-center gap-2 shadow-lg"
+                className="px-4 py-2 bg-invest-900 text-white rounded-lg text-sm font-medium hover:bg-invest-800 flex items-center gap-2 shadow-lg whitespace-nowrap"
             >
-                <PlusCircle size={18} /> Top-Up Wallet
+                <PlusCircle size={18} /> Top-Up
             </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200">
+      <div className="flex border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
           <button 
             onClick={() => setActiveTab('All')}
-            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'All' ? 'border-invest-gold text-invest-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === 'All' ? 'border-invest-gold text-invest-900 dark:text-invest-gold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
           >
               All Transactions
           </button>
           <button 
             onClick={() => setActiveTab('Pending')}
-            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'Pending' ? 'border-invest-gold text-invest-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'Pending' ? 'border-invest-gold text-invest-900 dark:text-invest-gold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
           >
               <Clock size={16} /> Approval Queue
               {transactions.filter(t => t.status === 'Pending').length > 0 && (
@@ -212,19 +211,19 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
           </button>
           <button 
             onClick={() => setActiveTab('Bulk')}
-            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'Bulk' ? 'border-invest-gold text-invest-900' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'Bulk' ? 'border-invest-gold text-invest-900 dark:text-invest-gold' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400'}`}
           >
-              <FileSpreadsheet size={16} /> Bulk Operations
+              <FileSpreadsheet size={16} /> Bulk Ops
           </button>
       </div>
 
       {activeTab === 'Bulk' ? (
           /* Bulk Upload Interface */
-          <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 text-center">
+          <div className="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-center">
               {!bulkFile ? (
-                  <div className="max-w-xl mx-auto border-2 border-dashed border-slate-300 rounded-xl p-10 hover:bg-slate-50 transition-colors">
+                  <div className="max-w-xl mx-auto border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-10 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                       <FileSpreadsheet className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                      <h3 className="text-lg font-medium text-slate-900">Upload Bulk Transaction File</h3>
+                      <h3 className="text-lg font-medium text-slate-900 dark:text-white">Upload Bulk Transaction File</h3>
                       <p className="text-slate-500 text-sm mt-2 mb-6">Drag and drop CSV or Excel file here to process bulk deposits or payroll.</p>
                       <label className="bg-invest-900 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-invest-800 transition-colors inline-flex items-center gap-2">
                           <Upload size={18} /> Select File
@@ -235,7 +234,7 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                   <div className="max-w-4xl mx-auto">
                       <div className="flex justify-between items-center mb-6">
                           <div className="text-left">
-                              <h3 className="font-bold text-invest-900">Preview: {bulkFile.name}</h3>
+                              <h3 className="font-bold text-invest-900 dark:text-white">Preview: {bulkFile.name}</h3>
                               <p className="text-xs text-slate-500">4 records found</p>
                           </div>
                           <div className="flex gap-2">
@@ -278,9 +277,9 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
               )}
           </div>
       ) : (
-          /* Transaction Table */
+          /* Transaction List */
           <>
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="relative flex-1 max-w-md w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input 
@@ -288,18 +287,65 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                     placeholder="Search by client or reference..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-invest-gold/50"
+                    className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-invest-gold/50 bg-transparent dark:text-white"
                 />
                 </div>
-                <button className="px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2">
+                <button className="px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
                     <Filter size={16} /> Filter
                 </button>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+                {filteredTx.map(t => (
+                    <div key={t.id} className={`bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 ${t.isFlagged ? 'border-l-4 border-l-red-500' : ''}`}>
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-2">
+                                <span className={`p-1.5 rounded-full ${
+                                    t.type === 'Deposit' || t.type === 'Top-up' ? 'bg-green-100 text-green-600' : 
+                                    t.type === 'Withdrawal' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                                }`}>
+                                    {t.type === 'Deposit' || t.type === 'Top-up' ? <ArrowDownLeft size={14} /> : 
+                                    t.type === 'Withdrawal' ? <ArrowUpRight size={14} /> : <RefreshCw size={14} />}
+                                </span>
+                                <div>
+                                    <div className="text-sm font-bold text-invest-900 dark:text-white">{t.type}</div>
+                                    <div className="text-xs text-slate-500">{t.date.split(',')[0]}</div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-bold text-slate-700 dark:text-white">{formatValue(t.amount)}</div>
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                                    t.status === 'Completed' ? 'bg-green-50 text-green-700' : 
+                                    t.status === 'Pending' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'
+                                }`}>{t.status}</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center text-xs border-t border-slate-100 dark:border-slate-700 pt-2 mt-2">
+                            <div className="text-slate-600 dark:text-slate-400 truncate max-w-[150px]">{getClientName(t.clientId)}</div>
+                            <div className="flex gap-2">
+                                {t.status === 'Pending' && (
+                                    <>
+                                        <button onClick={() => handleApprove(t)} className="text-green-600 font-bold">Approve</button>
+                                        <button className="text-red-600 font-bold">Reject</button>
+                                    </>
+                                )}
+                                {t.status === 'Completed' && (
+                                    <div className="flex items-center gap-1 text-slate-400">
+                                        {getChannelIcon(t.paymentChannel)} {t.paymentChannel}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500 border-b border-slate-100">
+                        <thead className="bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                         <tr>
                             <th className="px-6 py-4 font-medium">Date / Ref</th>
                             <th className="px-6 py-4 font-medium">Client</th>
@@ -311,16 +357,16 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                             <th className="px-6 py-4 font-medium text-right">Actions</th>
                         </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                         {filteredTx.map((t) => (
-                            <tr key={t.id} className={`hover:bg-slate-50/50 transition-colors ${t.isFlagged ? 'bg-red-50/50' : ''}`}>
+                            <tr key={t.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${t.isFlagged ? 'bg-red-50/50' : ''}`}>
                                 <td className="px-6 py-4">
-                                    <div className="text-invest-900 font-medium text-xs">{t.date.split(',')[0]}</div>
+                                    <div className="text-invest-900 dark:text-white font-medium text-xs">{t.date.split(',')[0]}</div>
                                     <div className="text-slate-400 text-[10px] font-mono mt-0.5">{isPrivacyMode ? '••••••••' : t.reference}</div>
                                 </td>
-                                <td className="px-6 py-4 font-medium text-invest-900">{getClientName(t.clientId)}</td>
+                                <td className="px-6 py-4 font-medium text-invest-900 dark:text-white">{getClientName(t.clientId)}</td>
                                 <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2 text-slate-600">
+                                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                                         {getChannelIcon(t.paymentChannel)}
                                         <span className="text-xs">{t.paymentChannel || 'System'}</span>
                                     </div>
@@ -335,7 +381,7 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                                         {t.type}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 font-bold text-slate-700 text-right">
+                                <td className="px-6 py-4 font-bold text-slate-700 dark:text-white text-right">
                                     {formatValue(t.amount)}
                                 </td>
                                 <td className="px-6 py-4 text-slate-500 text-xs text-right">
@@ -392,7 +438,7 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
       {/* Payment/Transfer Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-10">
-          <div className="bg-white rounded-xl shadow-2xl p-0 w-full max-w-lg animate-fade-in-down m-4 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-0 w-full max-w-lg animate-fade-in-down m-4 overflow-hidden">
             {/* Modal Header */}
             <div className={`p-6 text-white ${txType === 'Withdrawal' ? 'bg-red-600' : 'bg-invest-900'}`}>
                 <h3 className="text-xl font-bold flex items-center gap-2">
@@ -406,8 +452,8 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
                <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Select Client</label>
-                <select required value={newTx.clientId} onChange={e => setNewTx({...newTx, clientId: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none">
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Select Client</label>
+                <select required value={newTx.clientId} onChange={e => setNewTx({...newTx, clientId: e.target.value})} className="w-full border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none dark:bg-slate-700 dark:text-white">
                     <option value="">Select Client...</option>
                     {clients.map(c => (
                         <option key={c.id} value={c.id}>{c.name} - {c.accountNumber} (Bal: {formatValue(c.walletBalance)})</option>
@@ -419,15 +465,15 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                   <>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                             <label className="block text-xs font-medium text-slate-500 mb-1">Source Product</label>
-                             <select value={newTx.sourceProductId} onChange={e => setNewTx({...newTx, sourceProductId: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none">
+                             <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Source Product</label>
+                             <select value={newTx.sourceProductId} onChange={e => setNewTx({...newTx, sourceProductId: e.target.value})} className="w-full border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none dark:bg-slate-700 dark:text-white">
                                 <option value="">Wallet (Cash)</option>
                                 {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                              </select>
                         </div>
                         <div>
-                             <label className="block text-xs font-medium text-slate-500 mb-1">Destination Product</label>
-                             <select value={newTx.targetProductId} onChange={e => setNewTx({...newTx, targetProductId: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none">
+                             <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Destination Product</label>
+                             <select value={newTx.targetProductId} onChange={e => setNewTx({...newTx, targetProductId: e.target.value})} className="w-full border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none dark:bg-slate-700 dark:text-white">
                                 <option value="">Select Product...</option>
                                 {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                              </select>
@@ -437,7 +483,7 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
               ) : (
                 /* Payment Channel Grid */
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-2">Payment Channel</label>
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Payment Channel</label>
                     <div className="grid grid-cols-3 gap-3">
                         {['MTN MoMo', 'Vodafone Cash', 'AirtelTigo', 'Visa/Mastercard', 'Bank Transfer'].map((channel) => (
                             <button
@@ -447,7 +493,7 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
                                 className={`flex flex-col items-center justify-center p-3 rounded-lg border text-center transition-all ${
                                     newTx.paymentChannel === channel 
                                     ? 'border-invest-gold bg-amber-50 text-invest-900 ring-1 ring-invest-gold' 
-                                    : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                                    : 'border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
                                 }`}
                             >
                                 {getChannelIcon(channel)}
@@ -460,30 +506,29 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Amount (GHS)</label>
-                    <input required type="number" step="0.01" value={newTx.amount} onChange={e => setNewTx({...newTx, amount: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none font-bold" />
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Amount (GHS)</label>
+                    <input required type="number" step="0.01" value={newTx.amount} onChange={e => setNewTx({...newTx, amount: e.target.value})} className="w-full border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none font-bold dark:bg-slate-700 dark:text-white" />
                 </div>
                 {txType !== 'Transfer' && (
                     <div>
-                        {/* Dynamic Field based on channel */}
-                        <label className="block text-xs font-medium text-slate-500 mb-1">
+                        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                             {newTx.paymentChannel.includes('Card') ? 'Card Last 4 Digits' : newTx.paymentChannel.includes('Bank') ? 'Bank Account No.' : 'Mobile Number'}
                         </label>
-                        <input required type="text" value={newTx.paymentNumber} onChange={e => setNewTx({...newTx, paymentNumber: e.target.value})} className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none" placeholder={newTx.paymentChannel.includes('Card') ? '**** 1234' : '024xxxxxxx'} />
+                        <input required type="text" value={newTx.paymentNumber} onChange={e => setNewTx({...newTx, paymentNumber: e.target.value})} className="w-full border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-invest-gold outline-none dark:bg-slate-700 dark:text-white" placeholder={newTx.paymentChannel.includes('Card') ? '**** 1234' : '024xxxxxxx'} />
                     </div>
                 )}
               </div>
 
               {/* Fee Preview Box (Hide for transfer) */}
               {txType !== 'Transfer' && newTx.amount && (
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                      <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-500">Transaction Fee</span>
+                  <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border border-slate-100 dark:border-slate-600">
+                      <div className="flex justify-between text-sm mb-1 dark:text-slate-300">
+                          <span className="text-slate-500 dark:text-slate-400">Transaction Fee</span>
                           <span className="font-medium">
                               {new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(calculateFee(parseFloat(newTx.amount), newTx.paymentChannel, txType))}
                           </span>
                       </div>
-                      <div className="flex justify-between text-sm font-bold text-invest-900 pt-2 border-t border-slate-200 mt-2">
+                      <div className="flex justify-between text-sm font-bold text-invest-900 dark:text-white pt-2 border-t border-slate-200 dark:border-slate-600 mt-2">
                           <span>Total {txType === 'Deposit' ? 'Payable' : 'Deductible'}</span>
                           <span>
                               {new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(
@@ -497,8 +542,8 @@ const Transactions: React.FC<TransactionsProps> = ({ transactions, clients, prod
               )}
 
               
-              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-slate-600 hover:text-invest-900">Cancel</button>
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+                <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-invest-900">Cancel</button>
                 <button type="submit" className={`px-6 py-2 text-white rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg ${txType === 'Withdrawal' ? 'bg-red-600 hover:bg-red-700' : 'bg-invest-900 hover:bg-invest-800'}`}>
                     <CheckCircle size={16} /> Confirm Process
                 </button>

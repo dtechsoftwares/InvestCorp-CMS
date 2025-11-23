@@ -1,13 +1,15 @@
+
 import React, { useState } from 'react';
 import { User } from '../types';
-import { Plus, Search, MoreVertical, Shield, User as UserIcon } from 'lucide-react';
+import { Plus, Search, MoreVertical, Shield, User as UserIcon, Power, RefreshCw } from 'lucide-react';
 
 interface UsersProps {
   users: User[];
   onAddUser: (user: Partial<User>) => void;
+  onToggleStatus: (id: string) => void;
 }
 
-const Users: React.FC<UsersProps> = ({ users, onAddUser }) => {
+const Users: React.FC<UsersProps> = ({ users, onAddUser, onToggleStatus }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Analyst' });
@@ -29,7 +31,7 @@ const Users: React.FC<UsersProps> = ({ users, onAddUser }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-invest-900">Team Management</h2>
-          <p className="text-slate-500 text-sm mt-1">Manage access and roles for your team.</p>
+          <p className="text-slate-500 text-sm mt-1">Manage access, roles, and staff accounts.</p>
         </div>
         <button 
           onClick={() => setShowModal(true)}
@@ -61,12 +63,12 @@ const Users: React.FC<UsersProps> = ({ users, onAddUser }) => {
               <th className="px-6 py-4 font-medium">Role</th>
               <th className="px-6 py-4 font-medium">Status</th>
               <th className="px-6 py-4 font-medium">Last Active</th>
-              <th className="px-6 py-4 font-medium text-right">Actions</th>
+              <th className="px-6 py-4 font-medium text-right">Admin Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
@@ -91,9 +93,13 @@ const Users: React.FC<UsersProps> = ({ users, onAddUser }) => {
                   {user.lastActive}
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <button className="p-1.5 text-slate-400 hover:text-invest-900 rounded hover:bg-slate-100">
-                    <MoreVertical size={16} />
-                  </button>
+                   <button 
+                      onClick={() => onToggleStatus(user.id)}
+                      title={user.status === 'Active' ? "Deactivate User" : "Activate User"}
+                      className={`p-2 rounded-lg transition-colors ${user.status === 'Active' ? 'text-slate-300 hover:text-red-500 hover:bg-red-50' : 'text-green-500 hover:bg-green-50'}`}
+                    >
+                      <Power size={16} />
+                   </button>
                 </td>
               </tr>
             ))}
@@ -103,7 +109,7 @@ const Users: React.FC<UsersProps> = ({ users, onAddUser }) => {
 
       {/* Add User Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md animate-fade-in-down">
             <h3 className="text-lg font-bold text-invest-900 mb-4">Add New Team Member</h3>
             <form onSubmit={handleAdd} className="space-y-4">

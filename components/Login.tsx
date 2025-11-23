@@ -1,6 +1,7 @@
 
+
 import React, { useState } from 'react';
-import { Lock, Mail, ArrowRight, ArrowLeft, Key, CreditCard } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ArrowLeft, Key, CreditCard, ShieldCheck } from 'lucide-react';
 import Logo from './Logo';
 
 interface LoginProps {
@@ -12,9 +13,10 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundImage, overlayOpacity, blurLevel }) => {
-  const [view, setView] = useState<'login' | 'forgot'>('login');
+  const [view, setView] = useState<'login' | 'forgot' | '2fa'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   // Default opacity to 0.8 if not provided
@@ -22,17 +24,24 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
   // Default blur to 4 if not provided
   const blur = blurLevel ?? 4;
 
-  // Validation pattern from provided HTML
-  const securityPattern = "[^()/><\\][\\\\x22,;|]+";
-
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate network delay
+    // Simulate auth check
     setTimeout(() => {
       setIsLoading(false);
-      onLogin();
+      setView('2fa'); // Move to 2FA step instead of direct login
     }, 1000);
+  };
+
+  const handle2FASubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsLoading(true);
+      // Simulate OTP verification
+      setTimeout(() => {
+          setIsLoading(false);
+          onLogin(); // Complete login
+      }, 1000);
   };
 
   const handleForgotSubmit = (e: React.FormEvent) => {
@@ -66,7 +75,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
 
       <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-2xl animate-fade-in-down mx-4 relative z-10">
         
-        {view === 'login' ? (
+        {view === 'login' && (
             <>
                 <div className="text-center mb-8 flex flex-col items-center">
                 <div className="mb-4 transform scale-90">
@@ -88,7 +97,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-invest-gold focus:border-transparent outline-none transition-all"
                         placeholder="admin@investcorp.com"
-                        pattern={securityPattern}
                     />
                     </div>
                 </div>
@@ -104,7 +112,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-invest-gold focus:border-transparent outline-none transition-all"
                         placeholder="••••••••"
-                        pattern={securityPattern}
                     />
                     </div>
                 </div>
@@ -112,13 +119,13 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                 <button 
                     type="submit" 
                     disabled={isLoading}
-                    className="w-full bg-invest-gold hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-amber-600/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-invest-900 text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg hover:bg-invest-800 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                     {isLoading ? (
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                     ) : (
                     <>
-                        Sign In <ArrowRight size={18} />
+                        Continue <ArrowRight size={18} />
                     </>
                     )}
                 </button>
@@ -135,8 +142,57 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                    </button>
                 </div>
             </>
-        ) : (
-            <>
+        )}
+
+        {view === '2fa' && (
+             <div className="animate-fade-in">
+                 <div className="text-center mb-8 flex flex-col items-center">
+                    <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 text-green-600">
+                        <ShieldCheck size={32} />
+                    </div>
+                    <h2 className="text-2xl font-bold text-invest-900">Security Verification</h2>
+                    <p className="text-slate-500 mt-2 text-sm">Enter the 6-digit code sent to your device ending in **89</p>
+                </div>
+
+                <form onSubmit={handle2FASubmit} className="space-y-6">
+                    <div>
+                        <input 
+                            type="text" 
+                            required
+                            maxLength={6}
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+                            className="w-full text-center text-3xl font-bold tracking-[0.5em] py-3 border-b-2 border-slate-200 focus:border-invest-gold outline-none transition-all bg-transparent"
+                            placeholder="000000"
+                            autoFocus
+                        />
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        disabled={isLoading || otp.length < 6}
+                        className="w-full bg-invest-gold text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg hover:bg-amber-600 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                         {isLoading ? (
+                            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        ) : (
+                            "Verify & Login"
+                        )}
+                    </button>
+                    
+                    <button 
+                        type="button"
+                        onClick={() => setView('login')}
+                        className="w-full text-slate-500 text-sm hover:text-invest-900"
+                    >
+                        Back to Login
+                    </button>
+                </form>
+             </div>
+        )}
+
+        {view === 'forgot' && (
+            <div className="animate-fade-in">
                 <div className="text-center mb-8 flex flex-col items-center">
                     <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4 text-invest-gold">
                         <Key size={32} />
@@ -155,7 +211,6 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                                 required
                                 className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-invest-gold focus:border-transparent outline-none transition-all"
                                 placeholder="Enter your registered ID"
-                                pattern={securityPattern}
                                 autoFocus
                             />
                         </div>
@@ -181,7 +236,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onUpdateGhanaCard, backgroundIma
                         Cancel
                     </button>
                 </form>
-            </>
+            </div>
         )}
         
         <div className="mt-6 pt-4 text-center text-xs text-slate-400">
